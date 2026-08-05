@@ -16,21 +16,21 @@
 
 :root{
   --bg:#FFFFFF;
-  --bg-elev:#F6F6F5;
+  --bg-elev:#F5F6F8;
   --text:#111111;
   --muted:#6B6B70;
   --border:rgba(0,0,0,0.11);
-  --accent:#FF4B26;
+  --accent:#2952E3;
   --accent-text:#FFFFFF;
   --font:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 :root[data-theme="dark"]{
   --bg:#0A0A0B;
-  --bg-elev:#151517;
+  --bg-elev:#12151C;
   --text:#F3F3F2;
   --muted:#8D8D93;
   --border:rgba(255,255,255,0.12);
-  --accent:#FF5C39;
+  --accent:#5B8DFF;
   --accent-text:#0A0A0B;
 }
 
@@ -57,11 +57,55 @@ img{max-width:100%;display:block;}
 
 .container{max-width:1080px;margin:0 auto;padding:0 32px;}
 
-#bgCanvas{
-  position:fixed; inset:0; width:100%; height:100%;
-  filter:blur(80px); opacity:0.75; transition:opacity 0.5s ease;
-  pointer-events:none;
+#bgLayer{position:fixed; inset:0; pointer-events:none; overflow:hidden;}
+
+/* duotone background photo of the owner */
+#bgPhoto{
+  position:absolute; top:0; right:0; height:100%; width:100%;
+  display:flex; align-items:flex-start; justify-content:flex-end;
+  opacity:0.07; filter:grayscale(1) contrast(1.1);
+  will-change:transform;
 }
+:root[data-theme="dark"] #bgPhoto{opacity:0.10;}
+#bgPhoto svg{width:min(52vw,760px); height:auto; margin-top:4vh; transform:translateX(8%);}
+#bgPhoto::after{
+  content:''; position:absolute; inset:0; background:var(--accent); mix-blend-mode:color; opacity:0.9;
+}
+
+#bgGrid{
+  position:absolute; inset:-2px;
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size:34px 34px;
+  opacity:0.45;
+  animation: gridBreathe 7s ease-in-out infinite;
+}
+@keyframes gridBreathe{0%,100%{opacity:0.32;}50%{opacity:0.52;}}
+#bgSpotlight{
+  position:absolute; inset:-2px;
+  background-image: radial-gradient(circle, var(--accent) 1.6px, transparent 1.6px);
+  background-size:34px 34px;
+  opacity:0.85;
+  -webkit-mask-image: radial-gradient(circle 260px at var(--mx,-500px) var(--my,-500px), black 0%, transparent 72%);
+  mask-image: radial-gradient(circle 260px at var(--mx,-500px) var(--my,-500px), black 0%, transparent 72%);
+}
+
+/* logo strip */
+.logo-strip-wrap{overflow:hidden; margin-top:44px; -webkit-mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent); mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);}
+.logo-strip{display:flex; gap:56px; width:max-content; animation:marquee 30s linear infinite;}
+.logo-badge{display:flex; align-items:center; gap:12px; white-space:nowrap;}
+.logo-mark{
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; letter-spacing:0.02em;
+  color:var(--muted); flex-shrink:0; transition:all 0.3s ease;
+}
+.logo-badge:hover .logo-mark{border-color:var(--accent); color:var(--accent);}
+.logo-badge span{font-size:14px; font-weight:600; color:var(--muted);}
+
+/* wipe reveal for headings */
+.reveal-wipe{
+  clip-path:inset(0 100% 0 0); transition:clip-path 1s cubic-bezier(.76,0,.24,1);
+}
+.reveal-wipe.in{clip-path:inset(0 0% 0 0);}
 section{padding:120px 0; position:relative;}
 @media (max-width:700px){ section{padding:80px 0;} }
 
@@ -165,6 +209,31 @@ nav.container{display:flex;align-items:center;justify-content:space-between;}
 
 /* ============ about ============ */
 .about-grid{display:grid;grid-template-columns:0.8fr 1.2fr;gap:64px;align-items:start;}
+
+/* marquee ticker */
+.marquee-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:26px 0;overflow:hidden;position:relative;}
+.marquee{display:flex;gap:48px;width:max-content;animation:marquee 26s linear infinite;}
+.marquee span{font-size:15px;font-weight:600;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:14px;}
+.marquee span::after{content:'●';font-size:6px;color:var(--accent);}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* bold statement */
+#statement{padding:160px 0;}
+.statement-text{font-size:clamp(28px,5vw,58px);font-weight:700;letter-spacing:-0.02em;line-height:1.15;max-width:920px;}
+.statement-text .dim{color:var(--muted);}
+.statement-text .accent{color:var(--accent);}
+
+/* case study */
+.case-wrap{border:1px solid var(--border);border-radius:12px;padding:56px;transition:border-color 0.3s ease;}
+.case-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:36px;flex-wrap:wrap;}
+.case-tag{font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);}
+.case-title{font-size:clamp(24px,3.2vw,36px);font-weight:700;margin-top:10px;max-width:560px;}
+.case-year{font-size:13px;color:var(--muted);white-space:nowrap;}
+.case-desc{color:var(--muted);font-size:16px;max-width:680px;margin-bottom:40px;}
+.case-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;padding-top:32px;border-top:1px solid var(--border);}
+.case-stat-num{font-size:30px;font-weight:800;letter-spacing:-0.02em;}
+.case-stat-label{font-size:12.5px;color:var(--muted);margin-top:4px;}
+@media (max-width:700px){ .case-wrap{padding:32px;} .case-stats{grid-template-columns:1fr;gap:20px;} }
 .ph-photo{width:100%;height:100%;aspect-ratio:3/4;border-radius:8px;background:var(--bg-elev);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);overflow:hidden;transition:border-color 0.3s ease;}
 .ph-photo svg{width:32px;height:32px;opacity:0.4;}
 .ph-photo span{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;opacity:0.6;}
@@ -268,7 +337,17 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<div id="bgLayer">
+  <div id="bgPhoto">
+    <!-- Replace this SVG placeholder with: <img src="your-photo.jpg" alt=""> -->
+    <svg viewBox="0 0 200 240" fill="currentColor" style="color:var(--text);">
+      <circle cx="100" cy="78" r="58"/>
+      <path d="M20 240c0-60 36-108 80-108s80 48 80 108z"/>
+    </svg>
+  </div>
+  <div id="bgGrid"></div>
+  <div id="bgSpotlight"></div>
+</div>
 
 <div id="cursor"></div>
 
@@ -331,6 +410,10 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   <div class="scroll-cue">Scroll <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
 </section>
 
+<div class="marquee-wrap">
+  <div class="marquee" id="marquee"></div>
+</div>
+
 <!-- ABOUT -->
 <section id="about">
   <div class="container about-grid">
@@ -342,7 +425,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
     </div>
     <div>
       <div class="eyebrow reveal"><span class="num">02</span> About</div>
-      <h2 class="section-title reveal">A little about how I think.</h2>
+      <h2 class="section-title reveal-wipe">A little about how I think.</h2>
       <div class="about-text reveal">
         <p>I'm a <strong>Computer Science graduate</strong> with a strong interest in research, technology-driven innovation, and project coordination. I'm building solid foundational expertise in sustainable business models, entrepreneurship, and management.</p>
         <p>I use my technical background and analytical skills to contribute to user-centered, impactful initiatives — and I'm continuing to pursue advanced academic study to take that further.</p>
@@ -362,12 +445,19 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   </div>
 </section>
 
+<!-- STATEMENT -->
+<section id="statement">
+  <div class="container">
+    <p class="statement-text reveal">I believe in <span class="accent">turning ideas into ventures</span> — pairing a technical foundation with a founder's instinct for <span class="dim">problems worth solving,</span> teams worth building, and impact worth chasing.</p>
+  </div>
+</section>
+
 <!-- EDUCATION -->
 <section id="education">
   <div class="container">
     <div class="section-head">
       <div class="eyebrow reveal"><span class="num">03</span> Education</div>
-      <h2 class="section-title reveal">Academic foundation.</h2>
+      <h2 class="section-title reveal-wipe">Academic foundation.</h2>
     </div>
     <div class="dl reveal-stagger">
       <div class="dl-item">
@@ -387,7 +477,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   <div class="container">
     <div class="section-head">
       <div class="eyebrow reveal"><span class="num">04</span> Journey</div>
-      <h2 class="section-title reveal">How I got here.</h2>
+      <h2 class="section-title reveal-wipe">How I got here.</h2>
     </div>
     <div class="dl reveal-stagger">
       <div class="dl-item">
@@ -423,20 +513,48 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   <div class="container">
     <div class="section-head">
       <div class="eyebrow reveal"><span class="num">05</span> Ventures</div>
-      <h2 class="section-title reveal">Ideas I've chased.</h2>
+      <h2 class="section-title reveal-wipe">Ideas I've chased.</h2>
       <p class="section-sub reveal">Hover a line to preview.</p>
+      <div class="logo-strip-wrap reveal">
+        <div class="logo-strip" id="logoStrip"></div>
+      </div>
     </div>
-    <div class="venture-list reveal-stagger" id="ventureList"></div>
+    <div class="venture-list reveal-stagger" id="ventureList" style="margin-top:20px;"></div>
   </div>
 </section>
 <div id="hoverPreview"><div class="ph-photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div></div>
+
+<!-- CASE STUDY -->
+<section id="case-study">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow reveal"><span class="num">—</span> Featured Venture</div>
+      <h2 class="section-title reveal-wipe">A closer look.</h2>
+    </div>
+    <div class="case-wrap reveal">
+      <div class="case-top">
+        <div>
+          <div class="case-tag">Founder &amp; Project Lead</div>
+          <div class="case-title">ElevateHours — trading skills on time, not money</div>
+        </div>
+        <div class="case-year">May 2026 — Present</div>
+      </div>
+      <p class="case-desc">ElevateHours is a time-barter platform where people trade skills using time credits instead of cash. I architected the core system workflows and used AI tools to rapidly prototype, test, and launch the platform's first features — designing it from day one around social impact aligned with UN SDGs 4 (Quality Education), 8 (Decent Work), 10 (Reduced Inequalities), and 17 (Partnerships).</p>
+      <div class="case-stats">
+        <div><div class="case-stat-num">4</div><div class="case-stat-label">UN SDGs Aligned</div></div>
+        <div><div class="case-stat-num">1st</div><div class="case-stat-label">Core Platform Shipped</div></div>
+        <div><div class="case-stat-num">2026</div><div class="case-stat-label">Founded</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- AWARDS -->
 <section id="awards">
   <div class="container">
     <div class="section-head">
       <div class="eyebrow reveal"><span class="num">06</span> Awards &amp; Recognition</div>
-      <h2 class="section-title reveal">Milestones along the way.</h2>
+      <h2 class="section-title reveal-wipe">Milestones along the way.</h2>
     </div>
     <div class="award-list reveal-stagger" id="awardList"></div>
   </div>
@@ -447,7 +565,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   <div class="container">
     <div class="section-head">
       <div class="eyebrow reveal"><span class="num">07</span> Volunteering</div>
-      <h2 class="section-title reveal">Giving back.</h2>
+      <h2 class="section-title reveal-wipe">Giving back.</h2>
     </div>
     <div class="dl reveal-stagger">
       <div class="dl-item">
@@ -458,7 +576,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 
     <div style="margin-top:80px;">
       <div class="eyebrow reveal"><span class="num">08</span> Beyond the work</div>
-      <h2 class="section-title reveal">What I do for fun.</h2>
+      <h2 class="section-title reveal-wipe">What I do for fun.</h2>
       <div class="hobby-row reveal-stagger" style="margin-top:8px;">
         <span>Travelling</span><span>Gaming</span><span>Singing</span>
       </div>
@@ -466,7 +584,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 
     <div style="margin-top:80px;">
       <div class="eyebrow reveal"><span class="num">09</span> Moments</div>
-      <h2 class="section-title reveal">A few snapshots.</h2>
+      <h2 class="section-title reveal-wipe">A few snapshots.</h2>
       <div class="gallery-grid reveal-stagger" id="galleryGrid"></div>
     </div>
   </div>
@@ -477,10 +595,12 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   <div class="container">
     <div class="eyebrow reveal"><span class="num">10</span> Contact</div>
     <h2 class="contact-title reveal">Let's build something<br>worth <span class="accent">believing in.</span></h2>
+    <p class="section-sub reveal" style="margin-bottom:32px;">Let's grab a coffee and talk — always open to a good conversation.</p>
     <a href="mailto:muhammadjabirhossain7@gmail.com" class="contact-email reveal">
       muhammadjabirhossain7@gmail.com
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
     </a>
+    <p class="section-sub reveal" style="margin-top:22px;margin-bottom:0;">+880 XXX XXXXXXX</p>
     <div class="social-row reveal">
       <a href="#">LinkedIn</a>
     </div>
@@ -514,6 +634,24 @@ const awards = [
 ];
 const photoIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>`;
 
+const skills = ["Leadership","Strategy","Product Thinking","Research","Public Speaking","Team Building","Growth","Negotiation","Vision-Setting","Community Building"];
+document.getElementById('marquee').innerHTML = [...skills, ...skills].map(s=>`<span>${s}</span>`).join('');
+
+const brands = [
+  {name:"CodeScriptors", mark:"CS"},
+  {name:"ElevateHours", mark:"EH"},
+  {name:"TrES Workspace", mark:"TW"},
+  {name:"SkillsScriptors", mark:"SS"},
+  {name:"London Educators", mark:"LE"}
+];
+document.getElementById('logoStrip').innerHTML = [...brands, ...brands].map(b=>`
+  <div class="logo-badge">
+    <div class="logo-mark">${b.mark}</div>
+    <span>${b.name}</span>
+  </div>
+`).join('');
+
+
 document.getElementById('ventureList').innerHTML = ventures.map((v,i)=>`
   <div class="venture-item">
     <div class="venture-num">${String(i+1).padStart(2,'0')}</div>
@@ -534,63 +672,31 @@ document.getElementById('galleryGrid').innerHTML = Array.from({length:4}).map(()
   <div class="ph-photo">${photoIcon}<span>Add Photo</span></div>
 `).join('');
 
-/* ============ ANIMATED BACKGROUND ============ */
+/* ============ ANIMATED BACKGROUND: blueprint grid + cursor spotlight ============ */
 (function(){
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w, h;
-  function resize(){
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+  const root = document.documentElement;
+  let mx = -500, my = -500, tx = -500, ty = -500;
 
-  function hexToRgba(hex, alpha){
-    hex = hex.trim().replace('#','');
-    if(hex.length===3){ hex = hex.split('').map(c=>c+c).join(''); }
-    const r = parseInt(hex.substring(0,2),16);
-    const g = parseInt(hex.substring(2,4),16);
-    const b = parseInt(hex.substring(4,6),16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
+  function setPos(x, y){ tx = x; ty = y; }
+  window.addEventListener('mousemove', e=>setPos(e.clientX, e.clientY));
+  window.addEventListener('touchmove', e=>{
+    if(e.touches[0]) setPos(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive:true});
 
-  let accentColor, textColor;
-  function refreshColors(){
-    const cs = getComputedStyle(document.documentElement);
-    accentColor = cs.getPropertyValue('--accent').trim();
-    textColor = cs.getPropertyValue('--text').trim();
+  if(reduced){
+    // static, centered soft highlight instead of a moving spotlight
+    root.style.setProperty('--mx', '50%');
+    root.style.setProperty('--my', '35%');
+  } else {
+    function loop(){
+      mx += (tx-mx)*0.12; my += (ty-my)*0.12;
+      root.style.setProperty('--mx', mx+'px');
+      root.style.setProperty('--my', my+'px');
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
   }
-  refreshColors();
-  document.getElementById('themeToggle').addEventListener('click', ()=>setTimeout(refreshColors, 50));
-
-  const blobs = [
-    {bx:0.22, by:0.28, r:0.42, speed:0.55, phase:0,   drift:0.16, kind:'accent', alpha:0.42},
-    {bx:0.80, by:0.68, r:0.48, speed:0.38, phase:2.1, drift:0.14, kind:'text',   alpha:0.14},
-    {bx:0.55, by:0.15, r:0.36, speed:0.62, phase:4.2, drift:0.18, kind:'accent', alpha:0.24},
-    {bx:0.15, by:0.80, r:0.34, speed:0.46, phase:1.3, drift:0.15, kind:'text',   alpha:0.12}
-  ];
-
-  function frame(t){
-    ctx.clearRect(0,0,w,h);
-    blobs.forEach(b=>{
-      const angle = t*0.00018*b.speed + b.phase;
-      const x = (b.bx + Math.cos(angle)*b.drift) * w;
-      const y = (b.by + Math.sin(angle)*b.drift) * h;
-      const radius = b.r * Math.max(w,h);
-      const color = b.kind === 'accent' ? accentColor : textColor;
-      const grad = ctx.createRadialGradient(x,y,0,x,y,radius);
-      grad.addColorStop(0, hexToRgba(color, b.alpha));
-      grad.addColorStop(1, hexToRgba(color, 0));
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(x,y,radius,0,Math.PI*2);
-      ctx.fill();
-    });
-    if(!reduced) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
 })();
 
 /* ============ THEME TOGGLE ============ */
@@ -664,6 +770,8 @@ function onScroll(){
   document.getElementById('toTop').classList.toggle('show', window.scrollY > 700);
   const docH = document.documentElement.scrollHeight - window.innerHeight;
   document.getElementById('topbar').style.width = (docH>0 ? (window.scrollY/docH)*100 : 0)+'%';
+  const bgPhoto = document.getElementById('bgPhoto');
+  if(bgPhoto) bgPhoto.style.transform = `translateY(${window.scrollY*0.08}px)`;
 }
 window.addEventListener('scroll', onScroll, {passive:true});
 onScroll();
@@ -681,7 +789,7 @@ const io = new IntersectionObserver((entries)=>{
 sections.forEach(s=>io.observe(s));
 
 /* ============ REVEAL ============ */
-const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+const revealEls = document.querySelectorAll('.reveal, .reveal-stagger, .reveal-wipe');
 const revealIO = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){ entry.target.classList.add('in'); revealIO.unobserve(entry.target); }
