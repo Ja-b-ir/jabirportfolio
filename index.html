@@ -244,6 +244,7 @@ nav.container{display:flex;align-items:center;justify-content:space-between;}
 .ph-photo{width:100%;height:100%;aspect-ratio:3/4;border-radius:8px;background:var(--bg-elev);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);overflow:hidden;transition:border-color 0.3s ease;}
 .ph-photo svg{width:32px;height:32px;opacity:0.4;}
 .ph-photo span{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;opacity:0.6;}
+.ph-photo img{width:100%;height:100%;object-fit:cover;}
 .about-text p{color:var(--muted);font-size:16.5px;margin-bottom:18px;max-width:560px;}
 .about-text strong{color:var(--text);font-weight:600;}
 .stats-row{display:flex;gap:48px;margin-top:40px;flex-wrap:wrap;}
@@ -424,11 +425,10 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 <!-- HERO -->
 <section id="home">
   <div class="hero-slideshow" id="heroSlideshow">
-    <!-- Replace each svg with <img src="photo.jpg" alt=""> to show your real photos -->
-    <div class="hero-slide active"><img src="hero1.png" alt=""><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/><span>Photo 1</span></div>
-    <div class="hero-slide"><img src="hero3.png" alt=""><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/><span>Photo 2</span></div>
-    <div class="hero-slide"><img src="hero4.png" alt=""><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/><span>Photo 2</span></div>
-    <div class="hero-slide"><img src="hero2.png" alt=""><circle cx="12" cy="8" r="4"/><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/><span>Photo 3</span></div>
+    <div class="hero-slide active"><img src="hero1.png" alt=""></div>
+    <div class="hero-slide"><img src="hero3.png" alt=""></div>
+    <div class="hero-slide"><img src="hero4.png" alt=""></div>
+    <div class="hero-slide"><img src="hero2.png" alt=""></div>
   </div>
   <div class="hero-overlay"></div>
   <div class="container hero-content">
@@ -459,8 +459,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
   <div class="container about-grid">
     <div class="reveal">
       <div class="ph-photo">
-        <img src="about1.jpeg" alt=""><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
-        <span>Your Photo Here</span>
+        <img src="about1.jpeg" alt="Md Jabir Hossen">
       </div>
     </div>
     <div>
@@ -575,7 +574,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
         </div>
         <div class="case-year">May 2026 — Present</div>
       </div>
-      <p class="case-desc">ElevateHours is a time-barter platform where people trade skills using time credits instead of cash. I architected the core system workflows and used different tools to rapidly prototype, test, and launch the platform's first features — designing it from day one around social impact aligned with UN SDGs 4 (Quality Education), 8 (Decent Work & Economic Growth), 10 (Reduced Inequalities), and 17 (Partnerships for the Goals).</p>
+      <p class="case-desc">ElevateHours is a time-barter platform where people trade skills using time credits instead of cash. I architected the core system workflows and used different tools to rapidly prototype, test, and launch the platform's first features — designing it from day one around social impact aligned with UN SDGs 4 (Quality Education), 8 (Decent Work &amp; Economic Growth), 10 (Reduced Inequalities), and 17 (Partnerships for the Goals).</p>
       <div class="case-stats">
         <div><div class="case-stat-num">4</div><div class="case-stat-label">UN SDGs Aligned</div></div>
         <div><div class="case-stat-num">1st</div><div class="case-stat-label">Core Platform Shipped</div></div>
@@ -588,8 +587,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 <!-- AWARDS -->
 <section id="awards">
   <div class="awards-bg">
-    <!-- Replace this SVG placeholder with: <img src="your-photo.jpg" alt=""> -->
-    <img src="award.jpeg" alt=""><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 5H4a3 3 0 0 0 3 5M17 5h3a3 3 0 0 1-3 5"/>
+    <img src="award.jpeg" alt="">
   </div>
   <div class="awards-overlay"></div>
   <div class="container">
@@ -661,6 +659,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 </div>
 
 <script>
+try {
 /* ============ DATA ============ */
 const ventures = [
   {title:"CodeScriptors", desc:"Founded and lead a tech company building solutions for skill-sharing and career growth, researching how to use modern technology and AI to design easy-to-use digital platforms.", tags:["Founder"]},
@@ -723,7 +722,6 @@ document.getElementById('galleryGrid').innerHTML = Array.from({length:4}).map(()
   }, {passive:true});
 
   if(reduced){
-    // static, centered soft highlight instead of a moving spotlight
     root.style.setProperty('--mx', '50%');
     root.style.setProperty('--my', '35%');
   } else {
@@ -840,12 +838,20 @@ sections.forEach(s=>io.observe(s));
 
 /* ============ REVEAL ============ */
 const revealEls = document.querySelectorAll('.reveal, .reveal-stagger, .reveal-wipe');
-const revealIO = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){ entry.target.classList.add('in'); revealIO.unobserve(entry.target); }
-  });
-}, {threshold:0.12});
-revealEls.forEach(el=>revealIO.observe(el));
+if('IntersectionObserver' in window){
+  const revealIO = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ entry.target.classList.add('in'); revealIO.unobserve(entry.target); }
+    });
+  }, {threshold:0.12});
+  revealEls.forEach(el=>revealIO.observe(el));
+} else {
+  revealEls.forEach(el=>el.classList.add('in'));
+}
+// Safety net: if anything above silently failed, force all reveal content visible after 4s
+setTimeout(()=>{
+  document.querySelectorAll('.reveal:not(.in), .reveal-stagger:not(.in), .reveal-wipe:not(.in)').forEach(el=>el.classList.add('in'));
+}, 4000);
 
 /* ============ COUNTERS ============ */
 const counterIO = new IntersectionObserver((entries)=>{
@@ -865,6 +871,12 @@ const counterIO = new IntersectionObserver((entries)=>{
   });
 }, {threshold:0.5});
 document.querySelectorAll('.stat-num').forEach(c=>counterIO.observe(c));
+
+} catch(err) {
+  console.error('Portfolio script error:', err);
+  // Fail-safe: never let a script error leave section content permanently hidden
+  document.querySelectorAll('.reveal, .reveal-stagger, .reveal-wipe').forEach(el=>el.classList.add('in'));
+}
 </script>
 </body>
 </html>
