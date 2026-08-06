@@ -59,19 +59,6 @@ img{max-width:100%;display:block;}
 
 #bgLayer{position:fixed; inset:0; pointer-events:none; overflow:hidden;}
 
-/* duotone background photo of the owner */
-#bgPhoto{
-  position:absolute; top:0; right:0; height:100%; width:100%;
-  display:flex; align-items:flex-start; justify-content:flex-end;
-  opacity:0.07; filter:grayscale(1) contrast(1.1);
-  will-change:transform;
-}
-:root[data-theme="dark"] #bgPhoto{opacity:0.10;}
-#bgPhoto svg{width:min(52vw,760px); height:auto; margin-top:4vh; transform:translateX(8%);}
-#bgPhoto::after{
-  content:''; position:absolute; inset:0; background:var(--accent); mix-blend-mode:color; opacity:0.9;
-}
-
 #bgGrid{
   position:absolute; inset:-2px;
   background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
@@ -186,14 +173,30 @@ nav.container{display:flex;align-items:center;justify-content:space-between;}
 
 /* ============ hero ============ */
 #home{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:100px;}
-.hero-name{font-size:clamp(48px,9vw,120px);line-height:0.98;letter-spacing:-0.03em;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 0.9fr;gap:56px;align-items:center;}
+.hero-name{font-size:clamp(40px,6.4vw,88px);line-height:0.98;letter-spacing:-0.03em;}
 .hero-name .word{display:inline-block;overflow:hidden;vertical-align:top;}
 .hero-name .word span{display:inline-block;transform:translateY(115%);transition:transform 1s cubic-bezier(.16,.84,.32,1);}
 #home.loaded .hero-name .word span{transform:translateY(0);}
 .hero-name .accent{color:var(--accent);font-style:normal;}
-.hero-row{display:flex; justify-content:space-between; align-items:flex-end; gap:40px; margin-top:36px; flex-wrap:wrap;}
+.hero-row{display:flex;flex-direction:column;align-items:flex-start;gap:28px;margin-top:32px;}
 .hero-desc{color:var(--muted);font-size:17px;max-width:420px;opacity:0;transform:translateY(10px);transition:all 0.8s ease 0.6s;}
 #home.loaded .hero-desc{opacity:1;transform:translateY(0);}
+
+.hero-slideshow{
+  position:relative;aspect-ratio:3/4;border-radius:8px;overflow:hidden;border:1px solid var(--border);
+  background:var(--bg-elev);opacity:0;transform:scale(0.96);transition:all 1s cubic-bezier(.16,.84,.32,1) 0.3s;
+}
+#home.loaded .hero-slideshow{opacity:1;transform:scale(1);}
+.hero-slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  color:var(--muted);opacity:0;transition:opacity 1.4s ease;
+}
+.hero-slide.active{opacity:1;}
+.hero-slide svg{width:32px;height:32px;opacity:0.4;}
+.hero-slide span{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;opacity:0.6;}
+.hero-slide img{width:100%;height:100%;object-fit:cover;}
+@media (max-width:820px){ .hero-grid{grid-template-columns:1fr;gap:36px;} .hero-slideshow{max-width:320px;order:-1;margin:0 auto;} }
 .hero-cta{display:flex;gap:14px;opacity:0;transform:translateY(10px);transition:all 0.8s ease 0.75s;}
 #home.loaded .hero-cta{opacity:1;transform:translateY(0);}
 .btn{font-size:14px;font-weight:600;padding:15px 26px;border-radius:100px;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:8px;}
@@ -316,19 +319,33 @@ nav.container{display:flex;align-items:center;justify-content:space-between;}
 /* ============ footer ============ */
 footer{border-top:1px solid var(--border);padding:32px 0;}
 .footer-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);gap:20px;}
-.footer-social{display:flex;align-items:center;gap:12px;}
-.footer-social a{
-  width:38px;height:38px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
-  transition:all 0.3s ease;
-}
-.footer-social a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px);}
-.footer-social svg{width:16px;height:16px;}
-.footer-left{display:flex;align-items:center;gap:20px;}
 @media (max-width:480px){ .footer-row{flex-direction:column;gap:20px;} }
 .to-top{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;opacity:0;transform:translateY(8px);pointer-events:none;}
 .to-top.show{opacity:1;transform:translateY(0);pointer-events:auto;}
 .to-top:hover{border-color:var(--accent);color:var(--accent);}
 .to-top svg{width:15px;height:15px;}
+
+/* ============ persistent social rail ============ */
+.social-rail{
+  position:fixed; right:28px; top:50%; transform:translateY(-50%); z-index:55;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+.social-rail a{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  color:var(--muted); background:var(--bg); transition:all 0.3s ease;
+}
+.social-rail a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px);}
+.social-rail a svg{width:16px;height:16px;}
+.social-rail-line{width:1px;height:64px;background:var(--border);margin-top:4px;}
+@media (max-width:820px){
+  .social-rail{
+    right:auto; left:50%; top:auto; bottom:18px; transform:translateX(-50%);
+    flex-direction:row; gap:10px; background:var(--bg); padding:8px; border-radius:100px; border:1px solid var(--border);
+  }
+  .social-rail a{width:34px;height:34px;}
+  .social-rail a svg{width:14px;height:14px;}
+  .social-rail-line{display:none;}
+}
 
 @media (max-width:820px){
   .about-grid{grid-template-columns:1fr;gap:36px;}
@@ -338,13 +355,6 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 <body>
 
 <div id="bgLayer">
-  <div id="bgPhoto">
-    <!-- Replace this SVG placeholder with: <img src="your-photo.jpg" alt=""> -->
-    <svg viewBox="0 0 200 240" fill="currentColor" style="color:var(--text);">
-      <circle cx="100" cy="78" r="58"/>
-      <path d="M20 240c0-60 36-108 80-108s80 48 80 108z"/>
-    </svg>
-  </div>
   <div id="bgGrid"></div>
   <div id="bgSpotlight"></div>
 </div>
@@ -393,18 +403,26 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
 
 <!-- HERO -->
 <section id="home">
-  <div class="container">
-    <div class="eyebrow"><span class="num">01</span> Vision-driven entrepreneur · CSE graduate</div>
-    <h1 class="hero-name">
-      <span class="word"><span>Md</span></span> <span class="word"><span>Jabir</span></span> <span class="word"><span>Hossen</span></span><br>
-      <span class="word"><span class="accent">builds</span></span> <span class="word"><span class="accent">what</span></span> <span class="word"><span class="accent">matters.</span></span>
-    </h1>
-    <div class="hero-row">
-      <p class="hero-desc">I'm a Computer Science graduate and founder building tech-driven ventures across skill-sharing, education, and career growth. Currently leading CodeScriptors and ElevateHours out of Dhaka, Bangladesh.</p>
-      <div class="hero-cta">
-        <a href="#ventures" class="btn btn-primary">View Work</a>
-        <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow"><span class="num">01</span> Founder · Engineer · Dreamer</div>
+      <h1 class="hero-name">
+        <span class="word"><span>Md</span></span> <span class="word"><span>Jabir</span></span> <span class="word"><span>Hossen</span></span><br>
+        <span class="word"><span class="accent">engineers</span></span> <span class="word"><span class="accent">bold</span></span> <span class="word"><span class="accent">ideas.</span></span>
+      </h1>
+      <div class="hero-row">
+        <p class="hero-desc">I'm a Computer Science graduate and founder building tech-driven ventures across skill-sharing, education, and career growth. Currently leading CodeScriptors and ElevateHours out of Dhaka, Bangladesh.</p>
+        <div class="hero-cta">
+          <a href="#ventures" class="btn btn-primary">View Work</a>
+          <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+        </div>
       </div>
+    </div>
+    <div class="hero-slideshow" id="heroSlideshow">
+      <!-- Replace each svg with <img src="photo.jpg" alt=""> to show your real photos -->
+      <div class="hero-slide active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Photo 1</span></div>
+      <div class="hero-slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Photo 2</span></div>
+      <div class="hero-slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Photo 3</span></div>
     </div>
   </div>
   <div class="scroll-cue">Scroll <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
@@ -427,19 +445,14 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
       <div class="eyebrow reveal"><span class="num">02</span> About</div>
       <h2 class="section-title reveal-wipe">A little about how I think.</h2>
       <div class="about-text reveal">
-        <p>I'm a <strong>Computer Science graduate</strong> with a strong interest in research, technology-driven innovation, and project coordination. I'm building solid foundational expertise in sustainable business models, entrepreneurship, and management.</p>
-        <p>I use my technical background and analytical skills to contribute to user-centered, impactful initiatives — and I'm continuing to pursue advanced academic study to take that further.</p>
+        <p>I've always been more interested in <strong>why something works</strong> than in just making it work. That curiosity is what pulled me from writing code to building companies — because a system is only as good as the problem it's actually solving for someone.</p>
+        <p>I don't believe in waiting for the "right time" to start. Most of what I've built began as a rough idea, a small team, and a willingness to be wrong in public until it wasn't wrong anymore. I care less about having all the answers upfront and more about asking better questions as I go.</p>
       </div>
       <div class="stats-row reveal">
         <div><div class="stat-num" data-count="2">0</div><div class="stat-label">Ventures Founded</div></div>
         <div><div class="stat-num" data-count="3">0</div><div class="stat-label">Professional Roles</div></div>
         <div><div class="stat-num" data-count="1">0</div><div class="stat-label">Award Won</div></div>
         <div><div class="stat-num" data-count="2">0</div><div class="stat-label">Years Volunteering</div></div>
-      </div>
-      <div class="tags-row reveal">
-        <span class="tag">Dhaka, Bangladesh</span>
-        <span class="tag">Bengali &amp; English</span>
-        <span class="tag">Open to partnerships</span>
       </div>
     </div>
   </div>
@@ -578,7 +591,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
       <div class="eyebrow reveal"><span class="num">08</span> Beyond the work</div>
       <h2 class="section-title reveal-wipe">What I do for fun.</h2>
       <div class="hobby-row reveal-stagger" style="margin-top:8px;">
-        <span>Travelling</span><span>Gaming</span><span>Singing</span>
+        <span>Travelling</span><span>Gaming</span><span>Singing</span><span>Watching Football</span>
       </div>
     </div>
 
@@ -600,26 +613,24 @@ footer{border-top:1px solid var(--border);padding:32px 0;}
       muhammadjabirhossain7@gmail.com
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
     </a>
-    <p class="section-sub reveal" style="margin-top:22px;margin-bottom:0;">+880 XXX XXXXXXX</p>
-    <div class="social-row reveal">
-      <a href="#">LinkedIn</a>
-    </div>
   </div>
 </section>
 
 <footer>
   <div class="container footer-row">
     <span>© 2026 Md Jabir Hossen</span>
-    <div class="footer-left">
-      <div class="footer-social">
-        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.24H4.5V23H.5V8.24zM8.5 8.24h3.83v2.02h.05c.53-1 1.84-2.06 3.79-2.06 4.05 0 4.8 2.67 4.8 6.14V23h-4v-6.75c0-1.61-.03-3.68-2.24-3.68-2.25 0-2.6 1.75-2.6 3.56V23h-4V8.24z"/></svg></a>
-        <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.72-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.73 0 0 .84-.27 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.42.2 2.47.1 2.73.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.81 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg></a>
-        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg></a>
-      </div>
-      <button class="to-top" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-    </div>
+    <button class="to-top" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
   </div>
 </footer>
+
+<!-- PERSISTENT SOCIAL RAIL -->
+<div class="social-rail">
+  <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.24H4.5V23H.5V8.24zM8.5 8.24h3.83v2.02h.05c.53-1 1.84-2.06 3.79-2.06 4.05 0 4.8 2.67 4.8 6.14V23h-4v-6.75c0-1.61-.03-3.68-2.24-3.68-2.25 0-2.6 1.75-2.6 3.56V23h-4V8.24z"/></svg></a>
+  <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5C10.6 9 10 7.6 9.8 7c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.4.2-.6.2-1.2.2-1.3-.1-.2-.3-.2-.6-.4z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 20.2 12 8.2 8.2 0 0 1 12 20.2z"/></svg></a>
+  <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg></a>
+  <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.72-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.73 0 0 .84-.27 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.42.2 2.47.1 2.73.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.81 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg></a>
+  <div class="social-rail-line"></div>
+</div>
 
 <script>
 /* ============ DATA ============ */
@@ -641,8 +652,7 @@ const brands = [
   {name:"CodeScriptors", mark:"CS"},
   {name:"ElevateHours", mark:"EH"},
   {name:"TrES Workspace", mark:"TW"},
-  {name:"SkillsScriptors", mark:"SS"},
-  {name:"London Educators", mark:"LE"}
+  {name:"SkillsScriptors", mark:"SS"}
 ];
 document.getElementById('logoStrip').innerHTML = [...brands, ...brands].map(b=>`
   <div class="logo-badge">
@@ -710,6 +720,20 @@ document.getElementById('themeToggle').addEventListener('click', ()=>{
   localStorage.setItem('theme', next);
 });
 
+/* ============ HERO SLIDESHOW ============ */
+(function(){
+  const slides = document.querySelectorAll('#heroSlideshow .hero-slide');
+  if(slides.length < 2) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  let i = 0;
+  setInterval(()=>{
+    slides[i].classList.remove('active');
+    i = (i+1) % slides.length;
+    slides[i].classList.add('active');
+  }, 3200);
+})();
+
 /* ============ PRELOADER ============ */
 (function(){
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -736,7 +760,7 @@ if(window.matchMedia('(hover:hover)').matches && !window.matchMedia('(prefers-re
   let mx=0,my=0,cx=0,cy=0;
   window.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;});
   function loop(){
-    cx += (mx-cx)*0.2; cy += (my-cy)*0.2;
+    cx += (mx-cx)*0.45; cy += (my-cy)*0.45;
     cur.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
     requestAnimationFrame(loop);
   }
@@ -770,8 +794,6 @@ function onScroll(){
   document.getElementById('toTop').classList.toggle('show', window.scrollY > 700);
   const docH = document.documentElement.scrollHeight - window.innerHeight;
   document.getElementById('topbar').style.width = (docH>0 ? (window.scrollY/docH)*100 : 0)+'%';
-  const bgPhoto = document.getElementById('bgPhoto');
-  if(bgPhoto) bgPhoto.style.transform = `translateY(${window.scrollY*0.08}px)`;
 }
 window.addEventListener('scroll', onScroll, {passive:true});
 onScroll();
